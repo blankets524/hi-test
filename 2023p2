@@ -1,0 +1,101 @@
+import sqlite3
+
+# Create/Open the database
+connection = sqlite3.connect(r"H:\New folder\TESTDATABASE.db")
+
+# Create a cursor
+cursor = connection.cursor()
+
+# Create the Student table
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS Student (
+    StudentID INTEGER PRIMARY KEY,
+    GivenName TEXT NOT NULL,
+    FamilyName TEXT NOT NULL,
+    ClassName TEXT NOT NULL
+)
+""")
+
+# Create the Test table
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS Test (
+    TestID TEXT PRIMARY KEY,
+    MaxMarks INTEGER NOT NULL
+)
+""")
+
+# Create the Class table
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS Class (
+    ClassName TEXT PRIMARY KEY,
+    YearGroup INTEGER NOT NULL
+)
+""")
+
+#Create the Student_Test table
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS Student_Test (
+    StudentTestID INTEGER PRIMARY KEY,
+    StudentID INTEGER NOT NULL,
+    TestID TEXT NOT NULL,
+    Mark INTEGER NOT NULL,
+    DateTest TEXT NOT NULL,
+    FOREIGN KEY (StudentID) REFERENCES Student(StudentID),
+    FOREIGN KEY (TestID) REFERENCES Test(TestID)
+)
+""")
+
+
+connection.commit()
+connection.close()
+
+import sqlite3
+
+
+#Connect to database
+connection = sqlite3.connect(r"H:\New folder\TESTDATABASE.db")
+cursor = connection.cursor()
+
+#class
+cursor.execute("""
+INSERT INTO Class (ClassName, YearGroup)
+VALUES ('CS3', 12)
+""")
+
+#student
+cursor.execute("""
+INSERT INTO Student (StudentID, GivenName, FamilyName, ClassName)
+VALUES (102, 'Mary', 'Lim', 'CS3')
+""")
+
+#test
+cursor.execute("""
+INSERT INTO Test (TestID, MaxMarks)
+VALUES ('PG1', 100)
+""")
+
+#test result
+cursor.execute("""
+INSERT INTO Student_Test
+(StudentTestID, StudentID, TestID, Mark, DateTest)
+VALUES
+(123, 102, 'PG1', 85, '2023-02-01')
+""")
+
+#Save
+connection.commit()
+
+#Check that the data was inserted
+cursor.execute("SELECT * FROM Student")
+print(cursor.fetchall())
+
+cursor.execute("SELECT * FROM Test")
+print(cursor.fetchall())
+
+cursor.execute("SELECT * FROM Class")
+print(cursor.fetchall())
+
+cursor.execute("SELECT * FROM Student_Test")
+print(cursor.fetchall())
+
+connection.close()
